@@ -1,215 +1,330 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusAI - 您的全方位智慧助理平台</title>
-    <!-- 引入 Tailwind CSS 與 FontAwesome 圖示 -->
+    <title>NexusAI Matrix - 您的全能高科技人工智慧協作者</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 500: '#6366f1', 600: '#4f46e5' }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
+        .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glow-effect { box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.25); }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
 
-    <!-- 導覽列 -->
-    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+    <!-- 頂部高科技導覽列 -->
+    <header class="glass-panel border-b border-slate-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-teal-400 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                    <i class="fa-solid fa-brain text-white text-lg"></i>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg glow-effect animate-pulse">
+                    <i class="fa-solid fa-microchip text-white text-lg"></i>
                 </div>
-                <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">NexusAI</span>
+                <div>
+                    <span class="text-lg font-bold tracking-wider bg-gradient-to-r from-white via-indigo-200 to-cyan-400 bg-clip-text text-transparent">NEXUS AI MATRIX</span>
+                    <span class="block text-[10px] text-cyan-400 tracking-widest uppercase">Autonomous Intelligence Core</span>
+                </div>
             </div>
-            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
-                <button onclick="switchTab('chat')" class="tab-btn hover:text-white transition text-indigo-400 font-semibold" data-target="chat">AI 對話助理</button>
-                <button onclick="switchTab('generator')" class="tab-btn hover:text-white transition" data-target="generator">智慧文案生成</button>
-                <button onclick="switchTab('code')" class="tab-btn hover:text-white transition" data-target="code">程式碼解析</button>
-            </nav>
-            <div>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-2"></span> 系統運行中
+            
+            <div class="flex items-center space-x-3">
+                <span id="api-status" class="hidden sm:inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 mr-2"></span> 未設定 API Key
                 </span>
+                <button onclick="openSettings()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 px-3.5 py-2 rounded-xl text-xs font-medium transition flex items-center gap-2 border border-slate-700/60 shadow-inner">
+                    <i class="fa-solid fa-key text-cyan-400"></i> 設定核心金鑰
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- 主要內容區 -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 flex flex-col">
+    <!-- 主要操作區塊 -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-        <!-- 區塊一：AI 對話助理 -->
-        <div id="chat-section" class="tab-content flex-1 flex flex-col bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-            <div class="p-4 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-comments text-indigo-400"></i>
-                    <h2 class="font-semibold text-white">智慧對話聊天室</h2>
-                </div>
-                <button onclick="clearChat()" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg transition">清除對話</button>
-            </div>
-            
-            <!-- 訊息捲動區 -->
-            <div id="chat-box" class="flex-1 p-6 overflow-y-auto space-y-4 max-h-[500px]">
-                <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white shrink-0"><i class="fa-solid fa-robot text-sm"></i></div>
-                    <div class="bg-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-200 max-w-xl border border-slate-700/50 shadow-sm">
-                        嗨！我是您的專屬 AI 助理。今天有什麼我可以幫忙的嗎？你可以試著問我任何問題！
-                    </div>
-                </div>
-            </div>
+        <!-- 左側導航面板 -->
+        <div class="lg:col-span-1 space-y-2">
+            <div class="text-xs font-semibold text-slate-400 px-3 mb-2 tracking-wider">核心功能模組</div>
+            <button onclick="switchTab('chat')" id="tab-btn-chat" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
+                <i class="fa-solid fa-brain w-5 text-indigo-200"></i> 智慧對話助理
+            </button>
+            <button onclick="switchTab('code')" id="tab-btn-code" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+                <i class="fa-solid fa-code w-5 text-cyan-400"></i> 程式碼解析與建構
+            </button>
+            <button onclick="switchTab('writer')" id="tab-btn-writer" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+                <i class="fa-solid fa-pen-nib w-5 text-purple-400"></i> 專業文案生成
+            </button>
+            <button onclick="switchTab('translate')" id="tab-btn-translate" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+                <i class="fa-solid fa-globe w-5 text-emerald-400"></i> 智慧多國翻譯
+            </button>
 
-            <!-- 輸入框 -->
-            <div class="p-4 bg-slate-900/90 border-t border-slate-800">
-                <form id="chat-form" onsubmit="handleChatSubmit(event)" class="flex gap-2">
-                    <input type="text" id="user-input" placeholder="輸入您的訊息..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl text-sm font-medium transition shadow-lg shadow-indigo-600/25 flex items-center justify-center">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- 區塊二：智慧文案生成 -->
-        <div id="generator-section" class="tab-content hidden flex-1 flex flex-col bg-slate-900 border border-slate-800 rounded-2xl shadow-xl p-6">
-            <h2 class="font-semibold text-white text-lg mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-pen-nib text-teal-400"></i> AI 創意文案生成器
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">主題與關鍵字</label>
-                        <input type="text" id="gen-topic" placeholder="例如：夏日海灘派對、智慧型手機發表..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-teal-500">
+            <div class="pt-6 px-3">
+                <div class="p-4 rounded-2xl bg-gradient-to-b from-indigo-950/40 to-slate-950 border border-indigo-500/20 text-xs space-y-2">
+                    <div class="font-semibold text-indigo-300 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved"></i> 系統狀態
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">文案風格</label>
-                        <select id="gen-style" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-teal-500">
-                            <option value="tech">專業科技風</option>
-                            <option value="marketing">熱情行銷風</option>
-                            <option value="poetic">文青感性風</option>
-                        </select>
-                    </div>
-                    <button onclick="generateCopywriting()" class="w-full bg-teal-600 hover:bg-teal-500 text-white py-3 rounded-xl text-sm font-medium transition shadow-lg shadow-teal-600/25">立即生成文案</button>
-                </div>
-                <div class="flex flex-col">
-                    <label class="block text-xs font-medium text-slate-400 mb-1">生成結果</label>
-                    <textarea id="gen-result" readonly placeholder="產出的內容將會顯示在這裡..." class="w-full flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 resize-none focus:outline-none"></textarea>
+                    <p class="text-slate-400 leading-relaxed">已啟動本地渲染與安全代理。輸入 OpenAI API Key 即可解鎖全功能深度神經網絡互動。</p>
                 </div>
             </div>
         </div>
 
-        <!-- 區塊三：程式碼解析 -->
-        <div id="code-section" class="tab-content hidden flex-1 flex flex-col bg-slate-900 border border-slate-800 rounded-2xl shadow-xl p-6">
-            <h2 class="font-semibold text-white text-lg mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-code text-indigo-400"></i> 快速程式碼摘要
-            </h2>
-            <div class="space-y-4 flex-1 flex flex-col">
-                <textarea id="code-input" placeholder="貼上您的程式碼片段 (JS, Python, HTML...)" class="w-full h-40 bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-indigo-300 font-mono resize-none focus:outline-none focus:border-indigo-500"></textarea>
-                <button onclick="analyzeCode()" class="bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-medium transition">分析程式碼</button>
-                <div id="code-output" class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 flex-1 hidden"></div>
-            </div>
-        </div>
+        <!-- 右側動態工作區 -->
+        <div class="lg:col-span-3 flex flex-col glass-panel rounded-2xl shadow-2xl overflow-hidden min-h-[650px]">
 
+            <!-- 1. 聊天室介面 -->
+            <div id="section-chat" class="workspace-section flex-1 flex flex-col">
+                <div class="p-4 bg-slate-900/60 border-b border-slate-800 flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span class="font-semibold text-sm text-white">GPT-4 / 3.5 智慧對話頻道</span>
+                    </div>
+                    <button onclick="clearChat()" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg transition">清除記憶</button>
+                </div>
+                
+                <!-- 訊息捲動區 -->
+                <div id="chat-box" class="flex-1 p-6 overflow-y-auto space-y-4 max-h-[520px]">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shrink-0 shadow-md">
+                            <i class="fa-solid fa-robot text-xs"></i>
+                        </div>
+                        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-200 max-w-xl shadow-sm leading-relaxed">
+                            您好！我是您的專屬高科技 AI 助理。請問今天需要協助進行什麼樣的任務或開發？
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 輸入框 -->
+                <div class="p-4 bg-slate-900/80 border-t border-slate-800">
+                    <form onsubmit="handleChatSubmit(event)" class="flex gap-2">
+                        <input type="text" id="chat-input" placeholder="輸入指令或問題..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition shadow-inner">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl text-sm font-medium transition shadow-lg shadow-indigo-600/30 flex items-center justify-center">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 2. 程式碼模組 -->
+            <div id="section-code" class="workspace-section hidden flex-1 flex flex-col p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-semibold text-white text-base flex items-center gap-2">
+                        <i class="fa-solid fa-code text-cyan-400"></i> 程式碼解析與重構
+                    </h2>
+                </div>
+                <textarea id="code-input" placeholder="在此貼上您的程式碼片段..." class="w-full h-36 bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-cyan-300 font-mono resize-none focus:outline-none focus:border-cyan-500 shadow-inner"></textarea>
+                <button onclick="runCodeTask()" class="bg-cyan-600 hover:bg-cyan-500 text-white py-3 rounded-xl text-sm font-medium transition shadow-lg shadow-cyan-600/20">執行分析與優化</button>
+                <div id="code-result" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 font-mono whitespace-pre-wrap hidden"></div>
+            </div>
+
+            <!-- 3. 文案模組 -->
+            <div id="section-writer" class="workspace-section hidden flex-1 flex flex-col p-6 space-y-4">
+                <h2 class="font-semibold text-white text-base flex items-center gap-2">
+                    <i class="fa-solid fa-pen-nib text-purple-400"></i> 專業文案生成器
+                </h2>
+                <input type="text" id="writer-topic" placeholder="輸入主題或關鍵字（例如：AI 科技發表會新聞稿）" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 shadow-inner">
+                <button onclick="runWriterTask()" class="bg-purple-600 hover:bg-purple-500 text-white py-3 rounded-xl text-sm font-medium transition shadow-lg shadow-purple-600/20">生成高質感文案</button>
+                <div id="writer-result" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 whitespace-pre-wrap"></div>
+            </div>
+
+            <!-- 4. 翻譯模組 -->
+            <div id="section-translate" class="workspace-section hidden flex-1 flex flex-col p-6 space-y-4">
+                <h2 class="font-semibold text-white text-base flex items-center gap-2">
+                    <i class="fa-solid fa-globe text-emerald-400"></i> 多國語言精準翻譯
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+                    <textarea id="translate-input" placeholder="輸入原文..." class="w-full h-40 bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-white resize-none focus:outline-none focus:border-emerald-500 shadow-inner"></textarea>
+                    <textarea id="translate-result" readonly placeholder="翻譯結果..." class="w-full h-40 bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 resize-none"></textarea>
+                </div>
+                <button onclick="runTranslateTask()" class="bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-medium transition shadow-lg shadow-emerald-600/20">開始翻譯</button>
+            </div>
+
+        </div>
     </main>
 
+    <!-- 設定 Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center z-50 p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+            <h3 class="font-semibold text-white text-lg flex items-center gap-2">
+                <i class="fa-solid fa-key text-cyan-400"></i> 核心 API Key 設定
+            </h3>
+            <p class="text-xs text-slate-400">輸入您的 OpenAI API Key，系統將直接安全地呼叫 AI 核心進行運算。</p>
+            <div>
+                <input type="password" id="api-key-input" placeholder="sk-..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 shadow-inner">
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeSettings()" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-xl text-sm transition">取消</button>
+                <button onclick="saveSettings()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-sm transition shadow-lg shadow-indigo-600/20">儲存金鑰</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 頁尾 -->
-    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-        &copy; 2026 NexusAI Platform. All rights reserved. Built with modern web technologies.
+    <footer class="border-t border-slate-800/80 py-4 text-center text-xs text-slate-500">
+        &copy; 2026 NexusAI Matrix Core. High-Performance Distributed AI Interface.
     </footer>
 
-    <!-- 互動 JavaScript 邏輯 -->
+    <!-- 邏輯與 API 互動核心 -->
     <script>
-        // 分頁切換
+        let apiKey = localStorage.getItem('nexus_matrix_key') || '';
+        const statusEl = document.getElementById('api-status');
+
+        function updateApiStatus() {
+            if (apiKey) {
+                statusEl.className = "hidden sm:inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse"></span> 核心已就緒 (API Connected)`;
+            } else {
+                statusEl.className = "hidden sm:inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 mr-2"></span> 未設定 API Key`;
+            }
+        }
+        updateApiStatus();
+
+        function openSettings() {
+            document.getElementById('api-key-input').value = apiKey;
+            document.getElementById('settings-modal').classList.remove('hidden');
+            document.getElementById('settings-modal').classList.add('flex');
+        }
+        function closeSettings() {
+            document.getElementById('settings-modal').classList.remove('flex');
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+        function saveSettings() {
+            apiKey = document.getElementById('api-key-input').value.trim();
+            localStorage.setItem('nexus_matrix_key', apiKey);
+            updateApiStatus();
+            closeSettings();
+            alert('API 金鑰已成功儲存至安全記憶體！');
+        }
+
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(tabId + '-section').classList.remove('hidden');
-            
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('text-indigo-400', 'font-semibold');
-                if(btn.dataset.target === tabId) {
-                    btn.classList.add('text-indigo-400', 'font-semibold');
+            document.querySelectorAll('.workspace-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById('section-' + tabId).classList.remove('hidden');
+
+            ['chat', 'code', 'writer', 'translate'].forEach(t => {
+                const btn = document.getElementById('tab-btn-' + t);
+                if (t === tabId) {
+                    btn.className = "w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 bg-indigo-600 text-white shadow-lg shadow-indigo-600/20";
+                } else {
+                    btn.className = "w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 text-slate-400 hover:bg-slate-900 hover:text-slate-200";
                 }
             });
         }
 
-        // 對話功能模擬
-        function handleChatSubmit(e) {
+        async function callOpenAI(promptText) {
+            if (!apiKey) {
+                return "【系統提示】尚未偵測到您的 API Key。請點擊右上角「設定核心金鑰」輸入您的 OpenAI 金鑰，才能解鎖完整的即時大腦生成能力！";
+            }
+            try {
+                const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-3.5-turbo',
+                        messages: [{ role: 'user', content: promptText }]
+                    })
+                });
+                const data = await res.json();
+                if (data.choices && data.choices.length > 0) {
+                    return data.choices[0].message.content;
+                } else if (data.error) {
+                    return `【API 錯誤】${data.error.message}`;
+                }
+            } catch (err) {
+                return `【連線錯誤】無法順利與 OpenAI 伺服器通訊：${err.message}`;
+            }
+            return "發生未知的回應錯誤。";
+        }
+
+        async function handleChatSubmit(e) {
             e.preventDefault();
-            const input = document.getElementById('user-input');
+            const input = document.getElementById('chat-input');
             const chatBox = document.getElementById('chat-box');
             const text = input.value.trim();
-            
-            if(!text) return;
+            if (!text) return;
 
-            // 使用者訊息
             chatBox.innerHTML += `
                 <div class="flex items-start justify-end space-x-3">
-                    <div class="bg-indigo-600 rounded-2xl px-4 py-3 text-sm text-white max-w-xl shadow-sm">
-                        ${escapeHtml(text)}
-                    </div>
-                    <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-white shrink-0"><i class="fa-solid fa-user text-sm"></i></div>
+                    <div class="bg-indigo-600 rounded-2xl px-4 py-3 text-sm text-white max-w-xl shadow-md">${escapeHtml(text)}</div>
+                    <div class="w-8 h-8 rounded-xl bg-slate-700 flex items-center justify-center text-white shrink-0 text-xs shadow"><i class="fa-solid fa-user"></i></div>
                 </div>
             `;
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // 模擬 AI 回應
-            setTimeout(() => {
-                let reply = "這是一個非常棒的想法！我們可以進一步透過優化架構與自動化流程來達成目標。";
-                if(text.includes('你好') || text.includes('嗨')) {
-                    reply = "哈囉！很高興能與你協作，請問有什麼我可以協助的嗎？";
-                } else if(text.includes('功能') || text.includes('能做什麼')) {
-我可以提供智慧對話、文案生成以及程式碼解析等強大功能！";
-                }
+            // 載入中動畫
+            const loadingId = 'loading-' + Date.now();
+            chatBox.innerHTML += `
+                <div id="${loadingId}" class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shrink-0 shadow-md animate-pulse"><i class="fa-solid fa-robot text-xs"></i></div>
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-400">AI 思考中...</div>
+                </div>
+            `;
+            chatBox.scrollTop = chatBox.scrollHeight;
 
-                chatBox.innerHTML += `
-                    <div class="flex items-start space-x-3">
-                        <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white shrink-0"><i class="fa-solid fa-robot text-sm"></i></div>
-                        <div class="bg-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-200 max-w-xl border border-slate-700/50 shadow-sm">
-                            ${reply}
-                        </div>
-                    </div>
-                `;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 600);
+            const reply = await callOpenAI(text);
+            document.getElementById(loadingId).remove();
+
+            chatBox.innerHTML += `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shrink-0 shadow-md"><i class="fa-solid fa-robot text-xs"></i></div>
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-200 max-w-xl shadow-sm whitespace-pre-wrap leading-relaxed">${escapeHtml(reply)}</div>
+                </div>
+            `;
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
         function clearChat() {
             document.getElementById('chat-box').innerHTML = `
                 <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white shrink-0"><i class="fa-solid fa-robot text-sm"></i></div>
-                    <div class="bg-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-200 max-w-xl border border-slate-700/50 shadow-sm">
-                        對話已清除，請問接下來想聊些什麼？
+                    <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shrink-0 shadow-md"><i class="fa-solid fa-robot text-xs"></i></div>
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-200 max-w-xl shadow-sm leading-relaxed">
+                        記憶已清除。請問接下來要進行什麼運算或討論？
                     </div>
                 </div>
             `;
         }
 
-        // 文案生成模擬
-        function generateCopywriting() {
-            const topic = document.getElementById('gen-topic').value || "智慧新品發表";
-            const style = document.getElementById('gen-style').value;
-            const resultBox = document.getElementById('gen-result');
-            
-            let outputs = {
-                tech: `【科技前瞻】針對「${topic}」，我們運用了新一代的領先科技架構，為使用者解鎖前所未有的流暢體驗與極致效能，引領未來潮流。`,
-                marketing: `🔥 顛覆想像！年度最受矚目的「${topic}」強勢登場！限時搶購，錯過不再，立即點擊了解詳情，享受極致優惠！`,
-                poetic: `在喧囂的日常中，尋找一抹屬於「${topic}」的純粹與美好。讓科技與靈魂溫柔交織，陪伴您度過每一個靈感乍現的時刻。`
-            };
-
-            resultBox.value = outputs[style];
+        async function runCodeTask() {
+            const code = document.getElementById('code-input').value;
+            const resBox = document.getElementById('code-result');
+            if (!code) return;
+            resBox.classList.remove('hidden');
+            resBox.innerText = "正在分析程式碼架構與邏輯...";
+            const res = await callOpenAI("請幫我深度分析以下程式碼，找出潛在錯誤並提供最佳化重構建議：\n" + code);
+            resBox.innerText = res;
         }
 
-        // 程式碼分析模擬
-        function analyzeCode() {
-            const code = document.getElementById('code-input').value;
-            const output = document.getElementById('code-output');
-            if(!code.trim()) {
-                alert('請先輸入程式碼！');
-                return;
-            }
-            output.classList.remove('hidden');
-            output.innerHTML = `<strong>💡 分析報告：</strong><br>偵測到程式碼長度約 ${code.length} 字元。結構清晰，無明顯語法錯誤，建議可以加入更多防呆機制與模組化封裝以提升可維護性。`;
+        async function runWriterTask() {
+            const topic = document.getElementById('writer-topic').value;
+            const resBox = document.getElementById('writer-result');
+            if (!topic) return;
+            resBox.innerText = "正在產生高質感文案...";
+            const res = await callOpenAI("請幫我撰寫一篇專業、吸睛且結構完整的文案，主題為：" + topic);
+            resBox.innerText = res;
+        }
+
+        async function runTranslateTask() {
+            const text = document.getElementById('translate-input').value;
+            const resBox = document.getElementById('translate-result');
+            if (!text) return;
+            resBox.value = "正在翻譯中...";
+            const res = await callOpenAI("請將以下文字精準翻譯為流暢的英文（若為英文則翻譯成繁體中文）：\n" + text);
+            resBox.value = res;
         }
 
         function escapeHtml(text) {
