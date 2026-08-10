@@ -3,34 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Cloud Open AI - 網路開源 AI 工作站</title>
+    <title>Nexus Cloud Matrix - 零門檻全能 AI 雲端工作站</title>
+    <!-- 引入 Tailwind CSS 與 FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入免金鑰雲端 AI 核心 (Puter.js) -->
+    <script src="https://js.puter.com/v2/puter.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: { colors: { brand: { 500: '#3b82f6', 600: '#2563eb' } } }
+            }
+        }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .glass-panel { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glow { box-shadow: 0 0 30px -5px rgba(59, 130, 246, 0.3); }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
 
     <!-- 頂部導覽列 -->
     <header class="glass-panel border-b border-slate-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
-                    <i class="fa-solid fa-cloud text-white text-lg"></i>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center shadow-lg glow animate-pulse">
+                    <i class="fa-solid fa-atom text-white text-lg"></i>
                 </div>
                 <div>
-                    <span class="text-lg font-bold tracking-wider text-white">NEXUS CLOUD AI</span>
-                    <span class="block text-[10px] text-purple-400 tracking-widest uppercase">Free Open-Source Cloud Hub</span>
+                    <span class="text-lg font-bold tracking-wider bg-gradient-to-r from-white via-blue-200 to-cyan-400 bg-clip-text text-transparent">NEXUS CLOUD MATRIX</span>
+                    <span class="block text-[10px] text-cyan-400 tracking-widest uppercase">Zero-Key Cloud AI Workstation</span>
                 </div>
             </div>
             
             <div class="flex items-center space-x-3">
-                <button onclick="openSettings()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 px-3.5 py-2 rounded-xl text-xs font-medium transition flex items-center gap-2 border border-slate-700">
-                    <i class="fa-solid fa-key text-purple-400"></i> 設定免費金鑰
-                </button>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-ping"></span> 雲端連線就緒（免金鑰）
+                </span>
             </div>
         </div>
     </header>
@@ -38,145 +50,118 @@
     <!-- 主要操作區 -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-        <!-- 左側選單 -->
+        <!-- 左側功能導航 -->
         <div class="lg:col-span-1 space-y-3">
-            <div class="text-xs font-semibold text-slate-400 px-3 tracking-wider">雲端開源模型</div>
-            <div class="p-4 rounded-2xl glass-panel space-y-3">
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">選擇免費模型代號</label>
-                    <select id="model-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
-                        <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B (免費開源)</option>
-                        <option value="deepseek/deepseek-r1:free">DeepSeek R1 (免費開源推理)</option>
-                        <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash (免費雲端)</option>
-                    </select>
-                </div>
-                <p class="text-[11px] text-slate-400 leading-relaxed">
-                    提示：您可以至 <a href="https://openrouter.ai" target="_blank" class="text-purple-400 underline">OpenRouter.ai</a> 免費註冊帳號（免信用卡），取得一組免費 API Key 貼上即可使用其提供的免費開源模型。
-                </p>
-            </div>
-
-            <button onclick="switchTab('chat')" id="btn-chat" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 bg-purple-600 text-white shadow-lg shadow-purple-600/20">
-                <i class="fa-solid fa-brain w-5"></i> 雲端智能對話
+            <div class="text-xs font-semibold text-slate-400 px-3 tracking-wider">高科技功能模組</div>
+            
+            <button onclick="switchTab('chat')" id="btn-chat" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 bg-blue-600 text-white shadow-lg shadow-blue-600/30">
+                <i class="fa-solid fa-brain w-5 text-blue-200"></i> 智慧對話助理
             </button>
             <button onclick="switchTab('code')" id="btn-code" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 text-slate-400 hover:bg-slate-900 hover:text-slate-200">
-                <i class="fa-solid fa-code w-5"></i> 程式碼智慧解析
+                <i class="fa-solid fa-code w-5 text-cyan-400"></i> 程式碼解析與重構
             </button>
+            <button onclick="switchTab('writer')" id="btn-writer" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+                <i class="fa-solid fa-pen-nib w-5 text-purple-400"></i> 專業文案生成
+            </button>
+
+            <div class="pt-4 px-2">
+                <div class="p-4 rounded-2xl glass-panel text-xs space-y-2 border border-blue-500/20">
+                    <div class="font-semibold text-blue-300 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info"></i> 系統說明
+                    </div>
+                    <p class="text-slate-400 leading-relaxed">
+                        本系統已透過雲端介面直接掛載 AI 運算核心。您不需要輸入任何 API Key，隨開隨用！
+                    </p>
+                </div>
+            </div>
         </div>
 
-        <!-- 右側動態面板 -->
+        <!-- 右側動態工作區 -->
         <div class="lg:col-span-3 flex flex-col glass-panel rounded-2xl shadow-2xl overflow-hidden min-h-[650px]">
 
             <!-- 1. 聊天室模組 -->
             <div id="section-chat" class="workspace-section flex-1 flex flex-col">
                 <div class="p-4 bg-slate-900/60 border-b border-slate-800 flex items-center justify-between">
-                    <span class="font-semibold text-sm text-white flex items-center gap-2"><i class="fa-solid fa-comments text-purple-400"></i> 雲端開源聊天室</span>
-                    <button onclick="clearChat()" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg transition">清空對話</button>
+                    <span class="font-semibold text-sm text-white flex items-center gap-2">
+                        <i class="fa-solid fa-comments text-blue-400"></i> 雲端智能對話頻道
+                    </span>
+                    <button onclick="clearChat()" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg transition">清除紀錄</button>
                 </div>
                 
                 <div id="chat-box" class="flex-1 p-6 overflow-y-auto space-y-4 max-h-[520px]">
                     <div class="flex items-start space-x-3">
-                        <div class="w-8 h-8 rounded-xl bg-purple-600 flex items-center justify-center text-white shrink-0 text-xs shadow"><i class="fa-solid fa-robot"></i></div>
+                        <div class="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 text-xs shadow">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-200 max-w-xl shadow-sm leading-relaxed">
-                            您好！請點擊右上角「設定免費金鑰」填入您的 OpenRouter Key，即可透過網路雲端免費使用各大頂級開源模型（如 Llama、DeepSeek）。
+                            您好！我是您的雲端 AI 核心。本系統無需設定任何金鑰，隨時準備好為您處理各種繁雜任務！
                         </div>
                     </div>
                 </div>
 
                 <div class="p-4 bg-slate-900/80 border-t border-slate-800">
                     <form onsubmit="handleChatSubmit(event)" class="flex gap-2">
-                        <input type="text" id="chat-input" placeholder="輸入想問的問題..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 transition">
-                        <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl text-sm font-medium transition shadow-lg shadow-purple-600/20">發送</button>
+                        <input type="text" id="chat-input" placeholder="輸入想問的問題或指令..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition shadow-inner">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl text-sm font-medium transition shadow-lg shadow-blue-600/30 flex items-center justify-center">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
                     </form>
                 </div>
             </div>
 
             <!-- 2. 程式碼模組 -->
             <div id="section-code" class="workspace-section hidden flex-1 flex flex-col p-6 space-y-4">
-                <h2 class="font-semibold text-white text-base flex items-center gap-2"><i class="fa-solid fa-code text-purple-400"></i> 雲端程式碼重構與解析</h2>
-                <textarea id="code-input" placeholder="貼上程式碼..." class="w-full h-36 bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-purple-300 font-mono resize-none focus:outline-none focus:border-purple-500"></textarea>
-                <button onclick="runCodeTask()" class="bg-purple-600 hover:bg-purple-500 text-white py-3 rounded-xl text-sm font-medium transition">分析程式碼</button>
+                <h2 class="font-semibold text-white text-base flex items-center gap-2">
+                    <i class="fa-solid fa-code text-cyan-400"></i> 程式碼解析與重構
+                </h2>
+                <textarea id="code-input" placeholder="貼上您的程式碼片段..." class="w-full h-36 bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-cyan-300 font-mono resize-none focus:outline-none focus:border-cyan-500 shadow-inner"></textarea>
+                <button onclick="runCodeTask()" class="bg-cyan-600 hover:bg-cyan-500 text-white py-3 rounded-xl text-sm font-medium transition shadow-lg shadow-cyan-600/20">執行雲端分析</button>
                 <div id="code-result" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 font-mono whitespace-pre-wrap hidden"></div>
+            </div>
+
+            <!-- 3. 文案模組 -->
+            <div id="section-writer" class="workspace-section hidden flex-1 flex flex-col p-6 space-y-4">
+                <h2 class="font-semibold text-white text-base flex items-center gap-2">
+                    <i class="fa-solid fa-pen-nib text-purple-400"></i> 專業文案生成器
+                </h2>
+                <input type="text" id="writer-topic" placeholder="輸入主題或關鍵字（例如：次世代人工智慧發表會新聞稿）" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 shadow-inner">
+                <button onclick="runWriterTask()" class="bg-purple-600 hover:bg-purple-500 text-white py-3 rounded-xl text-sm font-medium transition shadow-lg shadow-purple-600/20">生成高質感文案</button>
+                <div id="writer-result" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 whitespace-pre-wrap"></div>
             </div>
 
         </div>
     </main>
 
-    <!-- 設定 Modal -->
-    <div id="settings-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center z-50 p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md space-y-4 shadow-2xl">
-            <h3 class="font-semibold text-white text-lg flex items-center gap-2"><i class="fa-solid fa-key text-purple-400"></i> 設定免費雲端金鑰</h3>
-            <p class="text-xs text-slate-400">請至 OpenRouter 免費申請一組金鑰（不需要填信用卡）並貼在下方：</p>
-            <input type="password" id="api-key-input" placeholder="sk-or-v1-..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
-            <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeSettings()" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-xl text-sm">取消</button>
-                <button onclick="saveSettings()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl text-sm">儲存金鑰</button>
-            </div>
-        </div>
-    </div>
+    <!-- 頁尾 -->
+    <footer class="border-t border-slate-800/80 py-4 text-center text-xs text-slate-500">
+        &copy; 2026 Nexus Cloud Matrix. Zero-Configuration AI Interface.
+    </footer>
 
-    <!-- 互動邏輯核心 -->
+    <!-- 核心互動邏輯 -->
     <script>
-        let apiKey = localStorage.getItem('nexus_cloud_key') || '';
-
-        function openSettings() {
-            document.getElementById('api-key-input').value = apiKey;
-            document.getElementById('settings-modal').classList.remove('hidden');
-            document.getElementById('settings-modal').classList.add('flex');
-        }
-        function closeSettings() {
-            document.getElementById('settings-modal').classList.remove('flex');
-            document.getElementById('settings-modal').classList.add('hidden');
-        }
-        function saveSettings() {
-            apiKey = document.getElementById('api-key-input').value.trim();
-            localStorage.setItem('nexus_cloud_key', apiKey);
-            closeSettings();
-            alert('金鑰已儲存！');
-        }
-
         function switchTab(tabId) {
             document.querySelectorAll('.workspace-section').forEach(el => el.classList.add('hidden'));
             document.getElementById('section-' + tabId).classList.remove('hidden');
 
-            ['chat', 'code'].forEach(t => {
+            ['chat', 'code', 'writer'].forEach(t => {
                 const btn = document.getElementById('btn-' + t);
                 if (t === tabId) {
-                    btn.className = "w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 bg-purple-600 text-white shadow-lg shadow-purple-600/20";
+                    btn.className = "w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 bg-blue-600 text-white shadow-lg shadow-blue-600/30";
                 } else {
                     btn.className = "w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition flex items-center gap-3 text-slate-400 hover:bg-slate-900 hover:text-slate-200";
                 }
             });
         }
 
+        // 透過免金鑰雲端核心發送請求
         async function callCloudAI(promptText) {
-            if (!apiKey) {
-                return "【系統提示】尚未設定免費金鑰。請點擊右上角「設定免費金鑰」輸入您的 OpenRouter Key（可至 openrouter.ai 免費申請，無需信用卡）。";
-            }
-            const model = document.getElementById('model-select').value;
             try {
-                const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`,
-                        'HTTP-Referer': window.location.href,
-                        'X-Title': 'Nexus Cloud AI'
-                    },
-                    body: JSON.stringify({
-                        model: model,
-                        messages: [{ role: 'user', content: promptText }]
-                    })
-                });
-                const data = await res.json();
-                if (data.choices && data.choices.length > 0) {
-                    return data.choices[0].message.content;
-                } else if (data.error) {
-                    return `【API 錯誤】${data.error.message}`;
-                }
+                // 使用內建的雲端 AI 介面進行對話生成
+                const response = await puter.ai.chat(promptText);
+                return response;
             } catch (err) {
-                return `【連線失敗】無法連接至雲端 API：${err.message}`;
+                return `【雲端連線異常】無法順利取得回應：${err.message || err}`;
             }
-            return "雲端模型未返回內容。";
         }
 
         async function handleChatSubmit(e) {
@@ -186,23 +171,45 @@
             const text = input.value.trim();
             if (!text) return;
 
-            chatBox.innerHTML += `<div class="flex items-start justify-end space-x-3"><div class="bg-purple-600 rounded-2xl px-4 py-3 text-sm text-white max-w-xl">${escapeHtml(text)}</div></div>`;
+            chatBox.innerHTML += `
+                <div class="flex items-start justify-end space-x-3">
+                    <div class="bg-blue-600 rounded-2xl px-4 py-3 text-sm text-white max-w-xl shadow-md">${escapeHtml(text)}</div>
+                    <div class="w-8 h-8 rounded-xl bg-slate-700 flex items-center justify-center text-white shrink-0 text-xs shadow"><i class="fa-solid fa-user"></i></div>
+                </div>
+            `;
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            const loadingId = 'load-' + Date.now();
-            chatBox.innerHTML += `<div id="${loadingId}" class="flex items-start space-x-3"><div class="w-8 h-8 rounded-xl bg-purple-600 flex items-center justify-center text-white shrink-0 text-xs shadow"><i class="fa-solid fa-robot"></i></div><div class="bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-400 animate-pulse">雲端開源模型運算中...</div></div>`;
+            const loadingId = 'loading-' + Date.now();
+            chatBox.innerHTML += `
+                <div id="${loadingId}" class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-md animate-pulse"><i class="fa-solid fa-robot text-xs"></i></div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-400">雲端神經網絡運算中...</div>
+                </div>
+            `;
             chatBox.scrollTop = chatBox.scrollHeight;
 
             const reply = await callCloudAI(text);
             document.getElementById(loadingId).remove();
 
-            chatBox.innerHTML += `<div class="flex items-start space-x-3"><div class="w-8 h-8 rounded-xl bg-purple-600 flex items-center justify-center text-white shrink-0 text-xs shadow"><i class="fa-solid fa-robot"></i></div><div class="bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-200 max-w-xl shadow-sm whitespace-pre-wrap leading-relaxed">${escapeHtml(reply)}</div></div>`;
+            chatBox.innerHTML += `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-md"><i class="fa-solid fa-robot text-xs"></i></div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-200 max-w-xl shadow-sm whitespace-pre-wrap leading-relaxed">${escapeHtml(reply)}</div>
+                </div>
+            `;
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
         function clearChat() {
-            document.getElementById('chat-box').innerHTML = `<div class="flex items-start space-x-3"><div class="w-8 h-8 rounded-xl bg-purple-600 flex items-center justify-center text-white shrink-0 text-xs shadow"><i class="fa-solid fa-robot"></i></div><div class="bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-200 max-w-xl shadow-sm">對話已清除。</div></div>`;
+            document.getElementById('chat-box').innerHTML = `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-md"><i class="fa-solid fa-robot text-xs"></i></div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-200 max-w-xl shadow-sm leading-relaxed">
+                        對話紀錄已重設。請問接下來要進行什麼分析或協作？
+                    </div>
+                </div>
+            `;
         }
 
         async function runCodeTask() {
@@ -210,8 +217,17 @@
             const resBox = document.getElementById('code-result');
             if (!code) return;
             resBox.classList.remove('hidden');
-            resBox.innerText = "雲端開源模型正在解析程式碼...";
-            const res = await callCloudAI("請幫我分析以下程式碼並給予優化建議：\n" + code);
+            resBox.innerText = "雲端 AI 正在深度分析程式碼邏輯...";
+            const res = await callCloudAI("請幫我分析以下程式碼，找出潛在錯誤並提供最佳化建議：\n" + code);
+            resBox.innerText = res;
+        }
+
+        async function runWriterTask() {
+            const topic = document.getElementById('writer-topic').value;
+            const resBox = document.getElementById('writer-result');
+            if (!topic) return;
+            resBox.innerText = "雲端 AI 正在編寫專業文案...";
+            const res = await callCloudAI("請幫我撰寫一篇專業、吸睛且結構完整的文案，主題為：" + topic);
             resBox.innerText = res;
         }
 
